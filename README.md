@@ -44,9 +44,10 @@ This is mainly for testing purposes.
   - Value **4** - mica alternative material, found in tabbed applications.
   - Value **5** - acrylic effect, undocumented, works in Windows 10, but can cause lag while dragging or resizing window.
 
-> [!NOTE]  
-> Previously, extending the frame into the client area caused visual glitches (such as white lines or invisible controls under HDR/ACM). Window margins are now preserved to prevent client area artifacts.
-> When using `micaType=1`, it is recommended to turn off Settings -> Personalization -> Colors -> "Show accent color on title bars and window borders" setting.
+> [!IMPORTANT]  
+> `micaType` with other value than `0` should not be used with HDR and ACM (Auto Color Management).
+> Due to Windows bug using `micaType` with other value than `0` and/or with `useDark=0` can cause visual glitches, with HDR/ACM visual glitches are more severe (e.g. invisible controls).  
+> It is also recommended when using with `micaType=1` to turn off Settings -> Personalization > Colors -> "Show accent color on title bars and window borders" setting.
 
 * * *
 

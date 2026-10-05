@@ -350,6 +350,7 @@ void SetMica(HWND hWnd)
         }
     }
 
+    constexpr MARGINS marginsExtended = { -1 };
     constexpr MARGINS marginsReset{};
 
     if (IsAtLeastWin10Build(BUILD_22H2))
@@ -387,13 +388,13 @@ void SetMica(HWND hWnd)
             }
         }
 
-        ::DwmExtendFrameIntoClientArea(hWnd, &marginsReset);
+        ::DwmExtendFrameIntoClientArea(hWnd, (mica != DWMSBT_AUTO) ? &marginsExtended : &marginsReset);
         ::DwmSetWindowAttribute(hWnd, DWMWA_SYSTEMBACKDROP_TYPE, &mica, sizeof(mica));
     }
     else if (IsAtLeastWin10Build(BUILD_WIN11))
     {
         const BOOL useMica = (micaType != 1);
-        ::DwmExtendFrameIntoClientArea(hWnd, &marginsReset);
+        ::DwmExtendFrameIntoClientArea(hWnd, (micaType != 0) ? &marginsExtended : &marginsReset);
         ::DwmSetWindowAttribute(hWnd, DWMWA_MICA_EFFECT, &useMica, sizeof(useMica));
     }
     else
