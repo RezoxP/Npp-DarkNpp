@@ -308,14 +308,19 @@ void SetTooltips(HWND hWnd)
 BOOL CALLBACK ScrollBarChildProc(HWND hWnd, LPARAM lparam)
 {
     const auto dwStyle = ::GetWindowLongPtr(hWnd, GWL_STYLE);
-    if ((dwStyle & (WS_CHILD | WS_VSCROLL)) > 0x0L)
+    if ((dwStyle & WS_CHILD) && (dwStyle & (WS_VSCROLL | WS_HSCROLL)))
     {
         wchar_t className[classNameLenght] = { '\0' };
         if (GetClassName(hWnd, className, classNameLenght) > 0)
         {
             if ((wcscmp(className, WC_TREEVIEW) == 0) ||
                 (wcscmp(className, WC_LISTVIEW) == 0) ||
-                (wcscmp(className, WC_HEADER) == 0))
+                (wcscmp(className, WC_HEADER) == 0) ||
+                (wcscmp(className, L"Scintilla") == 0) ||
+                (wcscmp(className, WC_TABCONTROL) == 0) ||
+                (wcscmp(className, TOOLBARCLASSNAME) == 0) ||
+                (wcscmp(className, REBARCLASSNAME) == 0) ||
+                (wcscmp(className, STATUSCLASSNAME) == 0))
             {
                 return TRUE;
             }
@@ -345,7 +350,6 @@ void SetMica(HWND hWnd)
         }
     }
 
-    constexpr MARGINS marginsExtended = { -1 };
     constexpr MARGINS marginsReset{};
 
     if (IsAtLeastWin10Build(BUILD_22H2))
@@ -383,13 +387,13 @@ void SetMica(HWND hWnd)
             }
         }
 
-        ::DwmExtendFrameIntoClientArea(hWnd, (mica != DWMSBT_AUTO) ? &marginsExtended : &marginsReset);
+        ::DwmExtendFrameIntoClientArea(hWnd, &marginsReset);
         ::DwmSetWindowAttribute(hWnd, DWMWA_SYSTEMBACKDROP_TYPE, &mica, sizeof(mica));
     }
     else if (IsAtLeastWin10Build(BUILD_WIN11))
     {
-        const BOOL useMica = (micaType == 0);
-        ::DwmExtendFrameIntoClientArea(hWnd, (micaType != 0) ? &marginsExtended : &marginsReset);
+        const BOOL useMica = (micaType != 1);
+        ::DwmExtendFrameIntoClientArea(hWnd, &marginsReset);
         ::DwmSetWindowAttribute(hWnd, DWMWA_MICA_EFFECT, &useMica, sizeof(useMica));
     }
     else

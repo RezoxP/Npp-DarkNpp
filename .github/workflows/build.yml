@@ -1,15 +1,43 @@
 name: Build
 
-on: [push]
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
 
 jobs:
   build:
-
     runs-on: windows-latest
 
     steps:
       - name: Check out source code
-        uses: actions/checkout@v1
-        
+        uses: actions/checkout@v4
+
+      - name: Add MSBuild to PATH
+        uses: microsoft/setup-msbuild@v2
+
       - name: Build
-        run: .\build.bat
+        run: .\build.bat Enterprise
+
+      - name: Upload x64 artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: DarkNpp-x64
+          path: Build/DarkNpp/x64-Release/DarkNpp.dll
+          if-no-files-found: error
+
+      - name: Upload Win32 artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: DarkNpp-Win32
+          path: Build/DarkNpp/Win32-Release/DarkNpp.dll
+          if-no-files-found: error
+
+      - name: Upload combined artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: DarkNpp
+          path: |
+            Build/DarkNpp/x64-Release/DarkNpp.dll
+            Build/DarkNpp/Win32-Release/DarkNpp.dll
+          if-no-files-found: error

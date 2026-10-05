@@ -20,6 +20,7 @@
 #include <Windows.h>
 
 #include <dwmapi.h>
+#include <CommCtrl.h>
 #include <Shlwapi.h>
 #include <Uxtheme.h>
 #include <VersionHelpers.h>

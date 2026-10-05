@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="Current" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(SolutionDir)VS\NppPlugin.Cpp.Default.props" />
   <ItemGroup Label="ProjectConfigurations">
@@ -42,28 +42,28 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
-    <OutDir>$(SolutionDir)Build\$(ProjectName)\$(PlatformTarget)-$(Configuration)\</OutDir>
-    <IntDir>$(SolutionDir)Build\$(ProjectName)\Obj\$(PlatformTarget)-$(Configuration)\</IntDir>
+    <OutDir>$(SolutionDir)Build\$(ProjectName)\$(Platform)-$(Configuration)\</OutDir>
+    <IntDir>$(SolutionDir)Build\$(ProjectName)\Obj\$(Platform)-$(Configuration)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
-    <OutDir>$(SolutionDir)Build\$(ProjectName)\$(PlatformTarget)-$(Configuration)\</OutDir>
-    <IntDir>$(SolutionDir)Build\$(ProjectName)\Obj\$(PlatformTarget)-$(Configuration)\</IntDir>
+    <OutDir>$(SolutionDir)Build\$(ProjectName)\$(Platform)-$(Configuration)\</OutDir>
+    <IntDir>$(SolutionDir)Build\$(ProjectName)\Obj\$(Platform)-$(Configuration)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
-    <OutDir>$(SolutionDir)Build\$(ProjectName)\$(PlatformTarget)-$(Configuration)\</OutDir>
-    <IntDir>$(SolutionDir)Build\$(ProjectName)\Obj\$(PlatformTarget)-$(Configuration)\</IntDir>
+    <OutDir>$(SolutionDir)Build\$(ProjectName)\$(Platform)-$(Configuration)\</OutDir>
+    <IntDir>$(SolutionDir)Build\$(ProjectName)\Obj\$(Platform)-$(Configuration)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
-    <OutDir>$(SolutionDir)Build\$(ProjectName)\$(PlatformTarget)-$(Configuration)\</OutDir>
-    <IntDir>$(SolutionDir)Build\$(ProjectName)\Obj\$(PlatformTarget)-$(Configuration)\</IntDir>
+    <OutDir>$(SolutionDir)Build\$(ProjectName)\$(Platform)-$(Configuration)\</OutDir>
+    <IntDir>$(SolutionDir)Build\$(ProjectName)\Obj\$(Platform)-$(Configuration)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseMD|Win32'" Label="Configuration">
-    <OutDir>$(SolutionDir)Build\$(ProjectName)\$(PlatformTarget)-$(Configuration)\</OutDir>
-    <IntDir>$(SolutionDir)Build\$(ProjectName)\Obj\$(PlatformTarget)-$(Configuration)\</IntDir>
+    <OutDir>$(SolutionDir)Build\$(ProjectName)\$(Platform)-$(Configuration)\</OutDir>
+    <IntDir>$(SolutionDir)Build\$(ProjectName)\Obj\$(Platform)-$(Configuration)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseMD|x64'" Label="Configuration">
-    <OutDir>$(SolutionDir)Build\$(ProjectName)\$(PlatformTarget)-$(Configuration)\</OutDir>
-    <IntDir>$(SolutionDir)Build\$(ProjectName)\Obj\$(PlatformTarget)-$(Configuration)\</IntDir>
+    <OutDir>$(SolutionDir)Build\$(ProjectName)\$(Platform)-$(Configuration)\</OutDir>
+    <IntDir>$(SolutionDir)Build\$(ProjectName)\Obj\$(Platform)-$(Configuration)\</IntDir>
   </PropertyGroup>
   <ItemGroup>
     <ClCompile Include="..\Plugin\Plugin.cpp" />
