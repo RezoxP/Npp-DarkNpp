@@ -80,9 +80,10 @@ extern "C" __declspec(dllexport) void beNotified(SCNotification* notifyCode)
         // preventing CPU spikes and eliminating ghost emoji artifacts during scrolling.
         if (notifyCode->updated & (SC_UPDATE_V_SCROLL | SC_UPDATE_H_SCROLL))
         {
-            if (notifyCode->nmhdr.hwndFrom != nullptr && ::IsWindow(notifyCode->nmhdr.hwndFrom))
+            const auto hWndFrom = static_cast<HWND>(notifyCode->nmhdr.hwndFrom);
+            if (hWndFrom != nullptr && ::IsWindow(hWndFrom))
             {
-                ::InvalidateRect(notifyCode->nmhdr.hwndFrom, nullptr, FALSE);
+                ::InvalidateRect(hWndFrom, nullptr, FALSE);
             }
         }
     }
