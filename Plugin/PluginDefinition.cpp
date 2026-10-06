@@ -24,7 +24,7 @@ const wchar_t sectionName[] = L"DarkNpp";
 
 static bool enableDark = false;
 
-static int micaType = 0;
+int micaType = 0;
 
 constexpr int menuItemEnableDark = 0;
 constexpr int menuItemMica = menuItemEnableDark + 3;
@@ -339,7 +339,11 @@ void ConfigureScintillaForEffects(HWND hSci)
         // Double-buffered drawing: ensures Scintilla renders to an offscreen surface
         // before presentation, eliminating alpha punch-through holes and flicker.
         // Memory overhead is strictly viewport size (~8MB for 1080p), constant for any file size.
-        ::SendMessage(hSci, SCI_SETBUFFEREDDRAW, TRUE, 0);
+        const auto buffered = ::SendMessage(hSci, SCI_GETBUFFEREDDRAW, 0, 0);
+        if (!buffered)
+        {
+            ::SendMessage(hSci, SCI_SETBUFFEREDDRAW, TRUE, 0);
+        }
 
         // If DirectWrite (1) is active, promote to DirectWrite Retain (2) so that Direct2D
         // retains glyph surfaces across redraws, avoiding cache invalidation and saving CPU.
@@ -357,42 +361,73 @@ void ConfigureAllScintillaViews()
     ConfigureScintillaForEffects(nppData._scintillaSecondHandle);
 }
 
-void SetMica(HWND hWnd)
+void ClearLegacyAccentPolicy(HWND hWnd)
 {
-    if (micaType == 5)
+    HMODULE hUser32 = ::GetModuleHandleW(L"user32.dll");
+    if (hUser32 != nullptr)
     {
-        if (IsAtLeastWin10Build(WIN10_22H2))
+        const auto _SetWindowCompositionAttribute = reinterpret_cast<SWCA>(::GetProcAddress(hUser32, "SetWindowCompositionAttribute"));
+        if (_SetWindowCompositionAttribute != nullptr)
         {
-            const auto hUser32 = ::LoadLibraryEx(L"user32.dll", nullptr, LOAD_LIBRARY_SEARCH_SYSTEM32);
-            if (hUser32)
-            {
-                const auto _SetWindowCompositionAttribute = reinterpret_cast<SWCA>(::GetProcAddress(hUser32, "SetWindowCompositionAttribute"));
-
-                if (_SetWindowCompositionAttribute != nullptr)
-                {
-                    ACCENTPOLICY policy = { ACCENT_ENABLE_ACRYLICBLURBEHIND, 2, 0x01101010, 0 };
-                    WINDOWCOMPOSITIONATTRIBDATA data = { WCA_ACCENT_POLICY, &policy, sizeof(ACCENTPOLICY) };
-                    _SetWindowCompositionAttribute(hWnd, &data);
-                }
-                ::FreeLibrary(hUser32);
-            }
+            ACCENTPOLICY policy{};
+            policy.nAccentState = ACCENT_DISABLED;
+            WINDOWCOMPOSITIONATTRIBDATA data = { WCA_ACCENT_POLICY, &policy, sizeof(ACCENTPOLICY) };
+            _SetWindowCompositionAttribute(hWnd, &data);
         }
     }
-    else if (!IsAtLeastWin10Build(BUILD_WIN11) && IsAtLeastWin10Build(WIN10_22H2))
+}
+
+void SetLegacyAccentPolicy(HWND hWnd, bool enableAcrylic)
+{
+    // SWCA accent policy is strictly a legacy fallback for Windows 10.
+    // On Windows 11, calling SWCA corrupts DWM composition and breaks DWMWA_SYSTEMBACKDROP_TYPE.
+    if (IsAtLeastWin10Build(BUILD_WIN11))
     {
-        const auto hUser32 = ::LoadLibraryEx(L"user32.dll", nullptr, LOAD_LIBRARY_SEARCH_SYSTEM32);
-        if (hUser32)
+        return;
+    }
+
+    if (IsAtLeastWin10Build(VER_1809))
+    {
+        HMODULE hUser32 = ::GetModuleHandleW(L"user32.dll");
+        if (hUser32 == nullptr)
+        {
+            hUser32 = ::LoadLibraryExW(L"user32.dll", nullptr, LOAD_LIBRARY_SEARCH_SYSTEM32);
+        }
+
+        if (hUser32 != nullptr)
         {
             const auto _SetWindowCompositionAttribute = reinterpret_cast<SWCA>(::GetProcAddress(hUser32, "SetWindowCompositionAttribute"));
-
             if (_SetWindowCompositionAttribute != nullptr)
             {
-                ACCENTPOLICY policy = { ACCENT_DISABLED, 0, 0, 0 };
+                ACCENTPOLICY policy{};
+                if (enableAcrylic)
+                {
+                    policy.nAccentState = ACCENT_ENABLE_ACRYLICBLURBEHIND;
+                    policy.nFlags = 2;
+                    policy.nColor = 0x01101010;
+                }
+                else
+                {
+                    policy.nAccentState = ACCENT_DISABLED;
+                }
                 WINDOWCOMPOSITIONATTRIBDATA data = { WCA_ACCENT_POLICY, &policy, sizeof(ACCENTPOLICY) };
                 _SetWindowCompositionAttribute(hWnd, &data);
             }
-            ::FreeLibrary(hUser32);
         }
+    }
+}
+
+void SetMica(HWND hWnd)
+{
+    // On Windows 11, ensure no legacy accent policy is active so DWM system backdrops function properly.
+    if (IsAtLeastWin10Build(BUILD_WIN11))
+    {
+        ClearLegacyAccentPolicy(hWnd);
+    }
+    else
+    {
+        // On Windows 10, acrylic blur behind is only available via undocumented SWCA.
+        SetLegacyAccentPolicy(hWnd, micaType == 5);
     }
 
     constexpr MARGINS marginsExtended = { -1, -1, -1, -1 };
@@ -416,7 +451,9 @@ void SetMica(HWND hWnd)
             break;
 
             case 3:
+            case 5:
             {
+                // DWMSBT_TRANSIENTWINDOW is the native Windows 11 Acrylic backdrop
                 mica = DWMSBT_TRANSIENTWINDOW;
             }
             break;
@@ -431,6 +468,7 @@ void SetMica(HWND hWnd)
             {
                 mica = DWMSBT_AUTO;
             }
+            break;
         }
 
         const bool isExtended = (micaType >= 2 && micaType <= 5);
@@ -468,4 +506,8 @@ void SetMicaNpp()
     HWND hwnd = nppData._nppHandle;
     SetMica(hwnd);
     ConfigureAllScintillaViews();
+    if (hwnd != nullptr && ::IsWindow(hwnd))
+    {
+        ::RedrawWindow(hwnd, nullptr, nullptr, RDW_INVALIDATE | RDW_ERASE | RDW_ALLCHILDREN | RDW_FRAME);
+    }
 }

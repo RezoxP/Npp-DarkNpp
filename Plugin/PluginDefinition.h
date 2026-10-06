@@ -97,6 +97,8 @@ using SWCA = bool (WINAPI*)(HWND hWnd, WINDOWCOMPOSITIONATTRIBDATA* wcaData);
 const wchar_t NPP_PLUGIN_NAME[] = L"DarkNpp";
 constexpr int nbFunc = 11;
 
+extern int micaType;
+
 void PluginInit();
 void CommandMenuInit();
 
@@ -120,6 +122,8 @@ void SetTitleBar(HWND hWnd);
 void SetTooltips(HWND hWnd);
 BOOL CALLBACK ScrollBarChildProc(HWND hWnd, LPARAM lparam);
 
+void ClearLegacyAccentPolicy(HWND hWnd);
+void SetLegacyAccentPolicy(HWND hWnd, bool enableAcrylic);
 void SetMica(HWND hWnd);
 
 void SetDarkNpp();

@@ -75,15 +75,18 @@ extern "C" __declspec(dllexport) void beNotified(SCNotification* notifyCode)
 
     case SCN_UPDATEUI:
     {
-        // Invalidate on vertical or horizontal scroll events to ensure clean repaint.
-        // Windows coalesces InvalidateRect calls into a single WM_PAINT per display refresh (60Hz),
-        // preventing CPU spikes and eliminating ghost emoji artifacts during scrolling.
-        if (notifyCode->updated & (SC_UPDATE_V_SCROLL | SC_UPDATE_H_SCROLL))
+        // Only invalidate on scroll events when a translucency effect is active (micaType 2 to 5).
+        // When micaType is Auto (0) or None (1), effects are disabled so zero extra work is done.
+        // Memory and CPU overhead is zero on large files as Scintilla double-buffering only buffers the viewport.
+        if (micaType >= 2 && micaType <= 5)
         {
-            const auto hWndFrom = static_cast<HWND>(notifyCode->nmhdr.hwndFrom);
-            if (hWndFrom != nullptr && ::IsWindow(hWndFrom))
+            if (notifyCode->updated & (SC_UPDATE_V_SCROLL | SC_UPDATE_H_SCROLL))
             {
-                ::InvalidateRect(hWndFrom, nullptr, FALSE);
+                const auto hWndFrom = static_cast<HWND>(notifyCode->nmhdr.hwndFrom);
+                if (hWndFrom != nullptr && (hWndFrom == nppData._scintillaMainHandle || hWndFrom == nppData._scintillaSecondHandle))
+                {
+                    ::InvalidateRect(hWndFrom, nullptr, FALSE);
+                }
             }
         }
     }
