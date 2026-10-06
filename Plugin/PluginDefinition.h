@@ -124,3 +124,5 @@ void SetMica(HWND hWnd);
 
 void SetDarkNpp();
 void SetMicaNpp();
+void ConfigureScintillaForEffects(HWND hSci);
+void ConfigureAllScintillaViews();

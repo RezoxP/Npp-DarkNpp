@@ -59,28 +59,46 @@ extern "C" __declspec(dllexport) FuncItem * getFuncsArray(int* nbF)
 }
 
 
-extern "C" __declspec(dllexport) void beNotified(SCNotification* /*notifyCode*/)
-{/*
+extern "C" __declspec(dllexport) void beNotified(SCNotification* notifyCode)
+{
+    if (notifyCode == nullptr)
+        return;
+
     switch (notifyCode->nmhdr.code)
     {
-    case NPPN_SHUTDOWN:
+    case NPPN_READY:
     {
-        commandMenuCleanUp();
+        ConfigureAllScintillaViews();
+        SetMicaNpp();
+    }
+    break;
+
+    case SCN_UPDATEUI:
+    {
+        // Invalidate on vertical or horizontal scroll events to ensure clean repaint.
+        // Windows coalesces InvalidateRect calls into a single WM_PAINT per display refresh (60Hz),
+        // preventing CPU spikes and eliminating ghost emoji artifacts during scrolling.
+        if (notifyCode->updated & (SC_UPDATE_V_SCROLL | SC_UPDATE_H_SCROLL))
+        {
+            if (notifyCode->nmhdr.hwndFrom != nullptr && ::IsWindow(notifyCode->nmhdr.hwndFrom))
+            {
+                ::InvalidateRect(notifyCode->nmhdr.hwndFrom, nullptr, FALSE);
+            }
+        }
     }
     break;
 
     default:
-        return;
-    }*/
+        break;
+    }
 }
 
-extern "C" __declspec(dllexport) LRESULT messageProc(UINT /*Message*/, WPARAM /*wParam*/, LPARAM /*lParam*/)
-{/*
-    if (Message == WM_MOVE)
+extern "C" __declspec(dllexport) LRESULT messageProc(UINT Message, WPARAM /*wParam*/, LPARAM /*lParam*/)
+{
+    if (Message == WM_DWMCOMPOSITIONCHANGED)
     {
-        ::MessageBox(NULL, "move", "", MB_OK);
+        SetMicaNpp();
     }
-*/
     return TRUE;
 }
 

@@ -38,6 +38,7 @@ void PluginInit()
     CommandMenuInit();
     SetDarkNpp();
     SetMicaNpp();
+    ConfigureAllScintillaViews();
 }
 
 void CommandMenuInit()
@@ -331,9 +332,53 @@ BOOL CALLBACK ScrollBarChildProc(HWND hWnd, LPARAM lparam)
     return TRUE;
 }
 
+void ConfigureScintillaForEffects(HWND hSci)
+{
+    if (hSci != nullptr && ::IsWindow(hSci))
+    {
+        // Double-buffered drawing: ensures Scintilla renders to an offscreen surface
+        // before presentation, eliminating alpha punch-through holes and flicker.
+        // Memory overhead is strictly viewport size (~8MB for 1080p), constant for any file size.
+        ::SendMessage(hSci, SCI_SETBUFFEREDDRAW, TRUE, 0);
+
+        // If DirectWrite (1) is active, promote to DirectWrite Retain (2) so that Direct2D
+        // retains glyph surfaces across redraws, avoiding cache invalidation and saving CPU.
+        const auto tech = ::SendMessage(hSci, SCI_GETTECHNOLOGY, 0, 0);
+        if (tech == SC_TECHNOLOGY_DIRECTWRITE)
+        {
+            ::SendMessage(hSci, SCI_SETTECHNOLOGY, SC_TECHNOLOGY_DIRECTWRITERETAIN, 0);
+        }
+    }
+}
+
+void ConfigureAllScintillaViews()
+{
+    ConfigureScintillaForEffects(nppData._scintillaMainHandle);
+    ConfigureScintillaForEffects(nppData._scintillaSecondHandle);
+}
+
 void SetMica(HWND hWnd)
 {
-    if (IsAtLeastWin10Build(WIN10_22H2))
+    if (micaType == 5)
+    {
+        if (IsAtLeastWin10Build(WIN10_22H2))
+        {
+            const auto hUser32 = ::LoadLibraryEx(L"user32.dll", nullptr, LOAD_LIBRARY_SEARCH_SYSTEM32);
+            if (hUser32)
+            {
+                const auto _SetWindowCompositionAttribute = reinterpret_cast<SWCA>(::GetProcAddress(hUser32, "SetWindowCompositionAttribute"));
+
+                if (_SetWindowCompositionAttribute != nullptr)
+                {
+                    ACCENTPOLICY policy = { ACCENT_ENABLE_ACRYLICBLURBEHIND, 2, 0x01101010, 0 };
+                    WINDOWCOMPOSITIONATTRIBDATA data = { WCA_ACCENT_POLICY, &policy, sizeof(ACCENTPOLICY) };
+                    _SetWindowCompositionAttribute(hWnd, &data);
+                }
+                ::FreeLibrary(hUser32);
+            }
+        }
+    }
+    else if (!IsAtLeastWin10Build(BUILD_WIN11) && IsAtLeastWin10Build(WIN10_22H2))
     {
         const auto hUser32 = ::LoadLibraryEx(L"user32.dll", nullptr, LOAD_LIBRARY_SEARCH_SYSTEM32);
         if (hUser32)
@@ -342,7 +387,7 @@ void SetMica(HWND hWnd)
 
             if (_SetWindowCompositionAttribute != nullptr)
             {
-                ACCENTPOLICY policy = { (micaType == 5) ? ACCENT_ENABLE_ACRYLICBLURBEHIND : ACCENT_DISABLED, 2, 0x01101010, 0 };
+                ACCENTPOLICY policy = { ACCENT_DISABLED, 0, 0, 0 };
                 WINDOWCOMPOSITIONATTRIBDATA data = { WCA_ACCENT_POLICY, &policy, sizeof(ACCENTPOLICY) };
                 _SetWindowCompositionAttribute(hWnd, &data);
             }
@@ -350,7 +395,7 @@ void SetMica(HWND hWnd)
         }
     }
 
-    constexpr MARGINS marginsExtended = { -1 };
+    constexpr MARGINS marginsExtended = { -1, -1, -1, -1 };
     constexpr MARGINS marginsReset{};
 
     if (IsAtLeastWin10Build(BUILD_22H2))
@@ -388,18 +433,21 @@ void SetMica(HWND hWnd)
             }
         }
 
-        ::DwmExtendFrameIntoClientArea(hWnd, (mica != DWMSBT_AUTO) ? &marginsExtended : &marginsReset);
+        const bool isExtended = (micaType >= 2 && micaType <= 5);
+        ::DwmExtendFrameIntoClientArea(hWnd, isExtended ? &marginsExtended : &marginsReset);
         ::DwmSetWindowAttribute(hWnd, DWMWA_SYSTEMBACKDROP_TYPE, &mica, sizeof(mica));
     }
     else if (IsAtLeastWin10Build(BUILD_WIN11))
     {
-        const BOOL useMica = (micaType != 1);
-        ::DwmExtendFrameIntoClientArea(hWnd, (micaType != 0) ? &marginsExtended : &marginsReset);
+        const BOOL useMica = (micaType != 1 && micaType != 0);
+        const bool isExtended = (micaType >= 2 && micaType <= 5);
+        ::DwmExtendFrameIntoClientArea(hWnd, isExtended ? &marginsExtended : &marginsReset);
         ::DwmSetWindowAttribute(hWnd, DWMWA_MICA_EFFECT, &useMica, sizeof(useMica));
     }
     else
     {
-        ::DwmExtendFrameIntoClientArea(hWnd, &marginsReset);
+        const bool isExtended = (micaType == 5);
+        ::DwmExtendFrameIntoClientArea(hWnd, isExtended ? &marginsExtended : &marginsReset);
     }
 }
 
@@ -419,4 +467,5 @@ void SetMicaNpp()
 {
     HWND hwnd = nppData._nppHandle;
     SetMica(hwnd);
+    ConfigureAllScintillaViews();
 }

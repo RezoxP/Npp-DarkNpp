@@ -48,6 +48,7 @@ This is mainly for testing purposes.
 > `micaType` with other value than `0` should not be used with HDR and ACM (Auto Color Management).
 > Due to Windows bug using `micaType` with other value than `0` and/or with `useDark=0` can cause visual glitches, with HDR/ACM visual glitches are more severe (e.g. invisible controls).  
 > It is also recommended when using with `micaType=1` to turn off Settings -> Personalization > Colors -> "Show accent color on title bars and window borders" setting.
+> Scintilla editor views are automatically configured for double-buffered rendering and Direct2D retention to prevent emoji rendering and scrolling artifacts.
 
 * * *
 
