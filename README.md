@@ -44,9 +44,6 @@ This is mainly for testing purposes.
   - Value **4** - mica alternative material, found in tabbed applications.
   - Value **5** - fluent acrylic effect (blur behind with noise texture and tint).
 
-- **effectIntensity** - Adjusts the translucency and blur intensity (from 10% to 100%, default 75%).
-  - Configurable directly from the **Plugins -> DarkNpp** menu presets (`100%`, `75%`, `50%`, `25%`) or via the interactive **Customize Intensity...** slider dialog with real-time live preview.
-
 > [!IMPORTANT]  
 > `micaType` with other value than `0` should not be used with HDR and ACM (Auto Color Management).
 > Due to Windows bug using `micaType` with other value than `0` and/or with `useDark=0` can cause visual glitches, with HDR/ACM visual glitches are more severe (e.g. invisible controls).  

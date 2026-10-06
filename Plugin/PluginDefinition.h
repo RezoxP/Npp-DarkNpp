@@ -94,13 +94,10 @@ struct ACCENTPOLICY {
 
 using SWCA = bool (WINAPI*)(HWND hWnd, WINDOWCOMPOSITIONATTRIBDATA* wcaData);
 
-#pragma comment(lib, "comctl32.lib")
-
 const wchar_t NPP_PLUGIN_NAME[] = L"DarkNpp";
-constexpr int nbFunc = 17;
+constexpr int nbFunc = 11;
 
 extern int micaType;
-extern int effectIntensity;
 
 void PluginInit();
 void CommandMenuInit();
@@ -115,14 +112,6 @@ void SetMicaTagAcrylic();
 void SetMicaTagTabbed();
 void SetTagAcrylic();
 void MicaCheckTag();
-
-void SetIntensity100();
-void SetIntensity75();
-void SetIntensity50();
-void SetIntensity25();
-void IntensityCheckTag();
-void ShowIntensityDialog();
-
 void About();
 
 bool IsAtLeastWin10Build(DWORD buildNumber);
@@ -134,7 +123,7 @@ void SetTooltips(HWND hWnd);
 BOOL CALLBACK ScrollBarChildProc(HWND hWnd, LPARAM lparam);
 
 void ClearLegacyAccentPolicy(HWND hWnd);
-void SetLegacyAccentPolicy(HWND hWnd, bool enableAcrylic, uint32_t nColor = 0);
+void SetLegacyAccentPolicy(HWND hWnd, bool enableAcrylic);
 void SetMica(HWND hWnd);
 
 void SetDarkNpp();
