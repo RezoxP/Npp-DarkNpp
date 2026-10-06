@@ -40,9 +40,12 @@ This is mainly for testing purposes.
   - Value **0** - let system choose mica material and use it only on title bar, default value.
   - Value **1** - don't use mica material.
   - Value **2** - mica material.
-  - Value **3** - mica acrylic material.
+  - Value **3** - mica acrylic material (Windows 11 DWM transient backdrop).
   - Value **4** - mica alternative material, found in tabbed applications.
-  - Value **5** - acrylic effect, undocumented, works in Windows 10, but can cause lag while dragging or resizing window.
+  - Value **5** - fluent acrylic effect (blur behind with noise texture and tint).
+
+- **effectIntensity** - Adjusts the translucency and blur intensity (from 10% to 100%, default 75%).
+  - Configurable directly from the **Plugins -> DarkNpp** menu presets (`100%`, `75%`, `50%`, `25%`) or via the interactive **Customize Intensity...** slider dialog with real-time live preview.
 
 > [!IMPORTANT]  
 > `micaType` with other value than `0` should not be used with HDR and ACM (Auto Color Management).
