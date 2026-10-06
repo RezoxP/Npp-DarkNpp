@@ -46,3 +46,6 @@ Intermediate
 # Visual Studio Generated
 *.aps
 *.vcxproj.user
+
+# Release packaging
+release-assets/

@@ -1,63 +1,119 @@
 # DarkNpp
 
-[![Build status](https://img.shields.io/github/actions/workflow/status/ozone10/Npp-DarkNpp/build.yml?branch=master&logo=Github)](https://github.com/ozone10/Npp-DarkNpp)
-[![Latest release](https://img.shields.io/github/v/release/ozone10/Npp-DarkNpp?include_prereleases)](https://github.com/ozone10/Npp-DarkNpp/releases/latest)
-[![Total downloads](https://img.shields.io/github/downloads/ozone10/Npp-DarkNpp/total.svg)](https://github.com/ozone10/Npp-DarkNpp/releases)
-[![Licence](https://img.shields.io/github/license/ozone10/Npp-DarkNpp?color=9cf)](https://www.gnu.org/licenses/gpl-3.0.en.html)
+[![Build status](https://img.shields.io/github/actions/workflow/status/RezoxP/Npp-DarkNpp/build.yml?branch=master&logo=Github)](https://github.com/RezoxP/Npp-DarkNpp)
+[![Latest release](https://img.shields.io/github/v/release/RezoxP/Npp-DarkNpp?include_prereleases)](https://github.com/RezoxP/Npp-DarkNpp/releases)
+[![Total downloads](https://img.shields.io/github/downloads/RezoxP/Npp-DarkNpp/total.svg)](https://github.com/RezoxP/Npp-DarkNpp/releases)
+[![License](https://img.shields.io/github/license/RezoxP/Npp-DarkNpp?color=9cf)](https://www.gnu.org/licenses/gpl-3.0.en.html)
 
-## NOTICE: Notepad++ 8.0 comes with support for the dark mode
+**DarkNpp** is a [Notepad++](https://github.com/notepad-plus-plus/notepad-plus-plus) plugin that brings native Windows 11 backdrop materials (**Mica**, **Mica Acrylic**, **Mica Alternative**, and **Fluent Acrylic**) to Notepad++, along with immersive dark mode title bar styling, context menus, and scrollbars.
 
-Currently plugin is mainly used for testing mica effects.
+---
 
-* * *
+## ⚠️ Beta Notice & Reporting Issues
 
-[Notepad++](https://github.com/notepad-plus-plus/notepad-plus-plus) plugin that allows to use partially dark mode on Notepad++.  
-Currently support: main title bar, some tooltips, some scroll bars and context menus.  
-  
-On Windows 11 allow to use mica effect on main window.
+> [!WARNING]
+> **DarkNpp is currently in public beta (`v1.0-beta`).**
+> Because Desktop Window Manager (DWM) composition and backdrop effects interact directly with Windows rendering pipelines, you may encounter visual glitches or edge cases depending on your graphics hardware, Windows build, or display configuration.
 
-This is mainly for testing purposes.
+If you encounter any bugs, crashes, or rendering artifacts, please [**Open a GitHub Issue**](https://github.com/RezoxP/Npp-DarkNpp/issues)!
 
-* * *
+### What to include when reporting an issue:
+To help us diagnose and fix problems quickly, please include:
+1. **Windows version & build number** (Press `Win + R`, run `winver`, e.g. *Windows 11 23H2 Build 22631*).
+2. **Notepad++ Debug Info** (In Notepad++, click `?` -> `Debug Info...` and copy the text).
+3. **Architecture** (64-bit `x64` or 32-bit `x86`).
+4. **Active DarkNpp Effect** (`Auto`, `None`, `Mica`, `Mica Acrylic`, `Mica Alternative`, or `Acrylic`).
+5. **Display Settings**: Whether **HDR** or **Auto Color Management (ACM)** is enabled in *Windows Settings -> Display*.
+6. **Screenshots or screen recordings** showing the visual anomaly.
 
-<p align="center">
-  <img src="https://i.imgur.com/sJm0Kke.png">
-  <img src="https://i.imgur.com/UDTmTzj.png">
-  <img src="https://i.imgur.com/fxBvFdi.png">
-</p>
+---
 
-* * *
+## 📦 Installation Guide
 
-## Options
+DarkNpp is available for both **64-bit (x64)** and **32-bit (x86)** Notepad++.
 
-- **useDark** - Option to choose mode.
+### Step 1: Check your Notepad++ Architecture
+1. Launch Notepad++.
+2. Click **`?`** in the top menu -> **`About Notepad++`** (or press `F1`).
+3. Note whether it says **64-bit** or **32-bit**.
 
-  - Value **0** - use light mode.
-  - Value **1** - use dark mode, default value.
+---
 
-- **micaType** - Option to apply mica material or other effects on main window. It is recommended to use `useDark=1` for mica materials.
+### Step 2: Download and Install
 
-  - Value **0** - let system choose mica material and use it only on title bar, default value.
-  - Value **1** - don't use mica material.
-  - Value **2** - mica material.
-  - Value **3** - mica acrylic material (Windows 11 DWM transient backdrop).
-  - Value **4** - mica alternative material, found in tabbed applications.
-  - Value **5** - fluent acrylic effect (blur behind with noise texture and tint).
+#### Option A: ZIP Archive (Recommended)
+1. Head to the [**Releases Page**](https://github.com/RezoxP/Npp-DarkNpp/releases) and download the matching archive:
+   - For 64-bit Notepad++: `DarkNpp-v1.0-beta-x64.zip`
+   - For 32-bit Notepad++: `DarkNpp-v1.0-beta-Win32.zip`
+2. In Notepad++, click **`Plugins`** -> **`Open Plugins Folder...`**.
+   - Default 64-bit path: `C:\Program Files\Notepad++\plugins\`
+   - Default 32-bit path: `C:\Program Files (x86)\Notepad++\plugins\`
+3. Extract the contents of the ZIP archive directly into your `plugins\` folder.
+   - It will create a folder named `DarkNpp` containing `DarkNpp.dll`.
+   - Your final folder structure should look like:
+     ```text
+     Notepad++\
+     └── plugins\
+         └── DarkNpp\
+             └── DarkNpp.dll
+     ```
+4. Restart Notepad++.
 
-> [!IMPORTANT]  
-> `micaType` with other value than `0` should not be used with HDR and ACM (Auto Color Management).
-> Due to Windows bug using `micaType` with other value than `0` and/or with `useDark=0` can cause visual glitches, with HDR/ACM visual glitches are more severe (e.g. invisible controls).  
-> It is also recommended when using with `micaType=1` to turn off Settings -> Personalization > Colors -> "Show accent color on title bars and window borders" setting.
-> Scintilla editor views are automatically configured for double-buffered rendering and Direct2D retention to prevent emoji rendering and scrolling artifacts.
+#### Option B: Direct DLL Download
+1. Download `DarkNpp-x64.dll` (for 64-bit) or `DarkNpp-Win32.dll` (for 32-bit) from [Releases](https://github.com/RezoxP/Npp-DarkNpp/releases).
+2. Rename the downloaded file to **`DarkNpp.dll`**.
+3. Open your Notepad++ `plugins\` folder (`Plugins` -> `Open Plugins Folder...`).
+4. Create a new folder named **`DarkNpp`**.
+5. Move `DarkNpp.dll` into `plugins\DarkNpp\`.
+6. Restart Notepad++.
 
-* * *
+---
 
-## Configs
+## 🎨 Features & Effect Modes
 
-- **Default:**  Dark mode with no Mica
+You can switch effects directly from the top menu via **`Plugins` -> `DarkNpp`**, or configure them in `%APPDATA%\Notepad++\plugins\config\DarkNpp.ini`.
 
-```ini
-[DarkNpp]
-useDark=1
-micaType=0
+| Option | Setting | Description |
+| :--- | :---: | :--- |
+| **Auto** | `micaType=0` | System default — applies standard Mica material to the title bar only. |
+| **None** | `micaType=1` | Disables all backdrop materials on the main window. |
+| **Mica** | `micaType=2` | Full-window Windows 11 Mica material matching your desktop wallpaper. |
+| **Mica Acrylic** | `micaType=3` | Windows 11 DWM transient backdrop (`DWMSBT_TRANSIENTWINDOW`). |
+| **Mica Alternative** | `micaType=4` | Windows 11 Mica Alt material (`DWMSBT_TABBEDWINDOW`), subtle variation designed for tabbed apps. |
+| **Acrylic** | `micaType=5` | Fluent Acrylic blur-behind effect with noise texture and tint (`SetWindowCompositionAttribute`). |
+
+### Additional Settings
+- **`useDark`**:
+  - `1` - Enable dark mode styling (recommended for Mica and Acrylic effects).
+  - `0` - Light mode styling.
+
+---
+
+## ⚡ Performance & Stability
+
+- **Optimized Scintilla Rendering**: Double-buffered drawing (`SCI_SETBUFFEREDDRAW`) and Direct2D retention are enabled to eliminate emoji rendering glitches, text artifacts, and high CPU/RAM usage when handling large files.
+- **Zero Overhead**: Backdrop effects are handled directly by the Windows Desktop Window Manager (DWM) composition engine with hardware acceleration.
+
+> [!IMPORTANT]
+> - With `micaType` set to values other than `0`, avoid enabling Windows HDR and Auto Color Management (ACM) on older Windows 11 builds, as DWM may produce transparency composition artifacts.
+> - For the cleanest look, navigate to Windows *Settings -> Personalization -> Colors* and disable *"Show accent color on title bars and window borders"*.
+
+---
+
+## 🛠️ Building from Source
+
+DarkNpp is compiled using Visual Studio 2022 (MSVC v143) with the Windows 11 SDK. Continuous integration and automated binary releases are handled via GitHub Actions (`.github/workflows/build.yml`).
+
+To build locally:
+```powershell
+# Open DarkNpp.sln in Visual Studio 2022
+# Select Release | x64 or Release | Win32
+msbuild DarkNpp.sln /p:Configuration=Release /p:Platform=x64
+msbuild DarkNpp.sln /p:Configuration=Release /p:Platform=Win32
 ```
+
+---
+
+## 📄 License
+
+DarkNpp is open-source software licensed under the **GNU General Public License v3.0 (GPL-3.0)**.
