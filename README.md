@@ -13,6 +13,19 @@
 
 ---
 
+## 📸 Screenshots
+
+### Mica
+![Mica](assets/mica.png)
+
+### Mica Acrylic
+![Mica Acrylic](assets/mica-acrylic.png)
+
+### Mica Alternative
+![Mica Alternative](assets/mica-alternative.png)
+
+---
+
 ## ⚠️ Beta Notice & Reporting Issues
 
 > [!WARNING]
